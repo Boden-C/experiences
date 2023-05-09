@@ -127,11 +127,11 @@ if [ $# -eq 0 ]; then
     elif [ -z "$message" ]; then
 	pull
 	push "updated code"
-	echo "Finished"
+	echo "Finished, try './git.sh -m' next time"
     else
 	pull
 	push "$message"
-	echo "Finished"
+	echo "Finished, try './git.sh -m \"commit message\"' next time"
     fi
     exit 0
 
@@ -140,7 +140,7 @@ elif [ $1 == "-m" ]; then
     if [ -z "$2" ]; then
 	pull
 	push "updated code"
-	echo "Finished, try './git.sh -m' next time"
+	echo "Finished"
     elif [ -n "$2" ] && [ "$2" == "\"$2\"" ]; then
 	pull
 	push "${2//\"}"
@@ -150,7 +150,7 @@ elif [ $1 == "-m" ]; then
 	echo "Assuming commit message is '$message'"
 	pull
 	push "${*:2}"
-	echo "Finished, try './git.sh -m \"commit message\"' next time"
+	echo "Finished"
     fi
     exit 0	
     
