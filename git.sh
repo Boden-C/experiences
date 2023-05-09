@@ -10,7 +10,7 @@ function checkGit {
 function checkRemote {
     remote_url=$(git config --get remote.origin.url)
     if [ -z "$remote_url" ]; then
-	read -p "Enter the Github SSH Link you want the remote repository to be at: " github_link
+	read -p "[PROMPT] Enter the Github SSH Link you want the remote repository to be at: " github_link
 	if [[ $github_link == "https://"* ]]; then
 	    echo "You entered the HTTPS Link, next time it is SSH. Converting..."
 	    # Replace "https://" with "git@" and ".com" with ":"
@@ -55,7 +55,7 @@ function branchMenu {
 	echo "=====WARNING====="
 	echo "GitHub uses 'main' as the default branch. Type 'main' below to change."
     fi
-    read -p "Enter the branch you want, or press 'Enter' to stay at $(git branch --show-current): " branch_name
+    read -p "[PROMPT] Enter the branch you want, or press 'Enter' to stay at $(git branch --show-current): " branch_name
 
     if [ -n "$branch_name" ]
     then
@@ -70,14 +70,14 @@ function branchMenu {
     fi
 }
 
-function sync {
+function pull {
     current_branch=$(git branch --show-current)
     if [ git branch --list $current_branch > /dev/null ]; then
 	if git pull origin $current_branch ; then
-	    push "$1"
+	    echo "Successfully pulled with no merge errors"
 	else
 	    echo "There was a error."
-	    read -p "If it is a merge error, press 'Enter' to run 'git mergetool', or any other key to exit." input
+	    read -p "[PROMPT] If it is a merge error, press 'Enter' to run 'git mergetool', or any other key to exit." input
 	    if [ -z "$input" ]; then
 		echo "Entering mergetool..."
 		git mergetool
@@ -93,7 +93,7 @@ function push {
     git add .
     git commit -m "$1"
     if [ -z "$(git status --porcelain)" ]; then
-	read -p "There are no changes staged, pressing 'Enter' will push all changes. Otherwise, press any key to exit." input
+	read -p "[PROMPT] There are no changes staged, pressing 'Enter' will push all changes. Otherwise, press any key to exit." input
 	if [ -z "$input" ]; then
 	    git add .
 	else
@@ -121,7 +121,7 @@ checkRemote
 if [ $# -eq 0 ]; then
     branchMenu
     echo "Type 'end' to finish and not sync; otherwise..."
-    read -p "Enter the commit message or 'Enter' to use 'updated code' as message: " message
+    read -p "[PROMPT] Enter the commit message or 'Enter' to use 'updated code' as message: " message
     if [[ $message == "end" ]]; then
 	echo "Finished without syncing"
     elif [ -z "$message" ]; then
@@ -168,7 +168,7 @@ elif [ $1 == "pull" ]; then
     
 elif [ $1 == "push" ]; then
     echo "This ONLY pushes and does not pull; type 'end' to cancel, otherwise..."
-    read -p "Enter the commit message or 'Enter' to use 'updated code' as message: " message
+    read -p "[PROMPT] Enter the commit message or 'Enter' to use 'updated code' as message: " message
     if [[ $message == "end" ]]; then
 	echo "Canceled"
     elif [ -z "$message" ]; then
@@ -186,7 +186,7 @@ elif [ $1 == "remote" ]; then
     echo "=====REMOTE REPOSITORY====="
     git remote -v
     echo "==========================="
-    read -p "Enter the Github SSH Link you want the remote repository to be at OR press 'Enter' to keep: " github_link
+    read -p "[PROMPT] Enter the Github SSH Link you want the remote repository to be at OR press 'Enter' to keep: " github_link
 	if [[ $github_link == "https://"* ]]; then
 	    echo "You entered the HTTPS Link, next time it is SSH. Converting..."
 	    # Replace "https://" with "git@" and ".com" with ":"
