@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd "$(dirname "$0")"
+
 function checkGit {
     if [ ! -d .git ]; then
 	echo "Git is not installed. Initializing Git repository..."
@@ -12,10 +14,10 @@ function checkRemote {
     if [ -z "$remote_url" ]; then
 	read -p "[PROMPT] Enter the Github SSH Link you want the remote repository to be at: " github_link
 	if [[ $github_link == "https://"* ]]; then
-	    echo "You entered the HTTPS Link, next time it is SSH. Converting..."
+	    echo "You entered the HTTPS Link, auto-converting..."
 	    # Replace "https://" with "git@" and ".com" with ":"
 	    github_link=${github_link/https:\/\//git@}
-	    github_link=${github_link/.com/:}
+	    github_link=${github_link/\//:}
 	fi
 	git remote add origin $github_link
 	echo "Remote origin added: $github_link"
@@ -26,46 +28,44 @@ function checkRemote {
 function helpMenu {
     echo
     echo "=====HELP====="
-    echo "./git.sh"
+    echo "sync"
     echo "     Choose branch and sync"
-    echo "./git.sh -m 'commit message'"
+    echo "sync -m 'commit message'"
     echo "     Skip branch and directly commit"
-    echo "./git.sh pull"
-    echo "     Pull and not push"
-    echo "./git.sh push"
-    echo "     Push and not pull"
-    echo "./git.sh remote"
-    echo "     View and change remote repository"
+    echo "sync pull"
+    echo "     Pull only"
+    echo "sync push"
+    echo "     Push only"
+    echo "sync remote"
+    echo "     View and change remote origin"
     echo "==============="
 }
 
 function branchMenu {
     # Check if Git repository has any branches
-    if [ -z "$(git branch)" ]
-    then
+    if [[ -z $(git branch --list) ]]; then
 	echo "Creating 'main' as default branch..."
+	git branch
 	git branch main
     fi
 
     echo "=====BRANCHES====="
     git branch
     echo "=================="
-    if [ $(git branch --show-current) = "master" ]
-    then
+    if [ $(git branch --show-current) = "master" ]; then
 	echo "=====WARNING====="
 	echo "GitHub uses 'main' as the default branch. Type 'main' below to change."
     fi
     read -p "[PROMPT] Enter the branch you want, or press 'Enter' to stay at $(git branch --show-current): " branch_name
 
-    if [ -n "$branch_name" ]
-    then
+    if [ -n "$branch_name" ]; then
 	if git branch --list $branch_name > /dev/null
 	then
 	    git checkout $branch_name
-	    echo "Switched to branch '$branch_name'."
+	    echo "Switched to branch '$(git branch --show-current)'."
 	else
 	    git checkout -b $branch_name
-	    echo "Created and switched to new branch '$branch_name'."
+	    echo "Created and switched to new branch '$(git branch --show-current)'."
 	fi
     fi
 }
@@ -83,7 +83,8 @@ function pull {
 		exit 0
 	    else
 		echo "Exiting, fix the merge error"
-		echo "Once done, do './git.sh -m \"commit message\"'"
+		echo "Once done, do 'sync -m \"commit message\"'"
+		exit 0
 	    fi
 	fi
     fi
@@ -98,7 +99,7 @@ function push {
 	    git add .
 	else
 	    echo "Exiting, do 'git add <file>' to stage a file for change"
-	    echo "Once done, do './git.sh push' and press 'Enter' on the warning"
+	    echo "Once done, do 'sync push' and press 'Enter' on the warning"
 	    exit 0
 	fi
     fi
@@ -127,11 +128,11 @@ if [ $# -eq 0 ]; then
     elif [ -z "$message" ]; then
 	pull
 	push "updated code"
-	echo "Finished, try './git.sh -m' next time"
+	echo "Finished, try 'sync -m' next time"
     else
 	pull
 	push "$message"
-	echo "Finished, try './git.sh -m \"commit message\"' next time"
+	echo "Finished, try 'sync -m \"commit message\"' next time"
     fi
     exit 0
 
@@ -144,7 +145,7 @@ elif [ $1 == "-m" ]; then
     elif [ -n "$2" ] && [ "$2" == "\"$2\"" ]; then
 	pull
 	push "${2//\"}"
-	echo "Finished, try './git.sh -m \"commit message\"' next time"
+	echo "Finished, try 'sync -m \"commit message\"' next time"
     else
 	message="${*:2}"
 	echo "Assuming commit message is '$message'"
@@ -188,10 +189,10 @@ elif [ $1 == "remote" ]; then
     echo "==========================="
     read -p "[PROMPT] Enter the Github SSH Link you want the remote repository to be at OR press 'Enter' to keep: " github_link
 	if [[ $github_link == "https://"* ]]; then
-	    echo "You entered the HTTPS Link, next time it is SSH. Converting..."
+	    echo "You entered the HTTPS Link, auto-converting..."
 	    # Replace "https://" with "git@" and ".com" with ":"
 	    github_link=${github_link/https:\/\//git@}
-	    github_link=${github_link/.com/:}
+	    github_link=${github_link/\//:}
 	elif [ -z $github_link ]; then
 	    echo "Staying at current remote repository"
 	    echo "Run 'git remote -v' to check for remote"
@@ -207,4 +208,3 @@ else
     helpMenu
     exit 0
 fi
-
