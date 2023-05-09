@@ -22,5 +22,5 @@ if [[ $(git status --porcelain | grep '^UU') ]]; then
     echo "git commit -m"
     echo "git push --ignore-submodules=all"
 else
-    git push --ignore-submodules=all
+    git push
 fi
