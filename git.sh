@@ -198,8 +198,8 @@ elif [ $1 == "remote" ]; then
 	    exit 0
 	fi
 	git remote add origin $github_link
-	git remote set-url origin $githun_link
-	echo "Remote origin added: $github_link"
+	git remote set-url origin $github_link
+	echo "Remote origin is now: $(git remote get-url origin)"
 	echo "Run 'git remote -v' to check for remote"
     exit 0
 
