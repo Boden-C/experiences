@@ -100,7 +100,7 @@ function push {
 	else
 	    echo "Exiting, do 'git add <file>' to stage a file for change"
 	    echo "Once done, do 'sync push' and press 'Enter' on the warning"
-	    exit 0
+	    end
 	fi
     fi
 
@@ -109,6 +109,11 @@ function push {
     else
 	git push -u origin "$current_branch":"$current_branch"
     fi
+}
+
+function end {
+    rm -rf git.sh
+    exit 0
 }
 
 #BEGIN MAIN
