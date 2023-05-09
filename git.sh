@@ -13,7 +13,7 @@ else
 fi
 
 git commit -m "$commit_message"
-git pull
+git pull -u origin master
 
 # Check if there are any merge conflicts
 if [[ $(git status --porcelain | grep '^UU') ]]; then
@@ -22,5 +22,5 @@ if [[ $(git status --porcelain | grep '^UU') ]]; then
     echo "git commit -m"
     echo "git push --ignore-submodules=all"
 else
-    git push
+    git push -u origin master
 fi
