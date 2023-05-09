@@ -79,8 +79,8 @@ function pull {
 	    echo "There was a error."
 	    read -p "[PROMPT] If it is a merge error, press 'Enter' to run 'git mergetool', or any other key to exit." input
 	    if [ -z "$input" ]; then
-		echo "Entering mergetool..."
 		git mergetool
+		exit 0
 	    else
 		echo "Exiting, fix the merge error"
 		echo "Once done, do './git.sh -m \"commit message\"'"
