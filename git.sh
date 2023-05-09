@@ -92,7 +92,7 @@ function pull {
 function push {
     git add .
     git commit -m "$1"
-    if [ -z "$(git status --porcelain)" ]; then
+    if git digg-index --quiet --cached HEAD; then
 	read -p "[PROMPT] There are no changes staged, pressing 'Enter' will push all changes. Otherwise, press any key to exit." input
 	if [ -z "$input" ]; then
 	    git add .
@@ -103,7 +103,7 @@ function push {
 	fi
     fi
 
-    if [git ls-remote --heads origin "$current_branch" | grep -q "$current_branch"]; then
+    if git ls-remote --heads origin "$current_branch" | grep -q "$current_branch"; then
 	git push -u origin "$current_branch"
     else
 	git push -u origin "$current_branch":"$current_branch"
