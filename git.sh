@@ -72,7 +72,7 @@ function branchMenu {
 
 function pull {
     current_branch=$(git branch --show-current)
-    if [ git branch --list $current_branch > /dev/null ]; then
+    if [ "git branch --list $current_branch > /dev/null" ]; then
 	if git pull origin $current_branch ; then
 	    echo "Successfully pulled with no merge errors"
 	else
