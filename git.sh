@@ -92,7 +92,7 @@ function pull {
 function push {
     git add .
     git commit -m "$1"
-    if git digg-index --quiet --cached HEAD; then
+    if git diff-index --quiet --cached HEAD; then
 	read -p "[PROMPT] There are no changes staged, pressing 'Enter' will push all changes. Otherwise, press any key to exit." input
 	if [ -z "$input" ]; then
 	    git add .
