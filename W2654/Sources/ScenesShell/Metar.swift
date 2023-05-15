@@ -44,7 +44,7 @@ class Metar: CustomStringConvertible {
     let snow_in: Double?
     let vert_vis_ft: Int?
     let metar_type: String?
-    let elevation_m: Int?
+    let elevation_m: Double?
 
     init(
         raw_text: String?, station_id: String?, observation_time: String?, latitude: Double?,
@@ -59,7 +59,7 @@ class Metar: CustomStringConvertible {
         cloud_base_ft_agl4: Int?, flight_category: String?, three_hr_pressure_tendency_mb: Double?,
         maxT_c: Double?, minT_c: Double?, maxT24hr_c: Double?, minT24hr_c: Double?,
         precip_in: Double?, pcp3hr_in: Double?, pcp6hr_in: Double?, pcp24hr_in: Double?,
-        snow_in: Double?, vert_vis_ft: Int?, metar_type: String?, elevation_m: Int?
+        snow_in: Double?, vert_vis_ft: Int?, metar_type: String?, elevation_m: Double?
     ) {
         self.raw_text = raw_text
         self.station_id = station_id
@@ -204,10 +204,10 @@ class Metar: CustomStringConvertible {
         self.snow_in = extractDouble(snow_in)
         self.vert_vis_ft = extractInt(vert_vis_ft)
         self.metar_type = metar_type
-        self.elevation_m = extractInt(elevation_m)
+        self.elevation_m = extractDouble(elevation_m)
     }
 
-    init(string:String) {
+    init?(string:String) {
         func extractInt(_ string: String?) -> Int? {
             if let nonNil = string {
                 if let number = Int(nonNil) {
@@ -247,7 +247,11 @@ class Metar: CustomStringConvertible {
             }
         }
 
-        let fields = string.split(separator: ",").map({$0.isEmpty ? nil : String($0)})
+        let fields = string.components(separatedBy: ",").map({$0.isEmpty ? nil : String($0)})
+        if (fields.count < 43) {
+            print("Could not parse \(string)")
+            return nil
+        }
         self.raw_text = fields[0]
         self.station_id = fields[1]
         self.observation_time = fields[2]
@@ -291,7 +295,7 @@ class Metar: CustomStringConvertible {
         self.snow_in = extractDouble(fields[40])
         self.vert_vis_ft = extractInt(fields[41])
         self.metar_type = fields[42]
-        self.elevation_m = extractInt(fields[43])
+        self.elevation_m = extractDouble(fields[43])
     }
 
     init(raw_text:String) {
