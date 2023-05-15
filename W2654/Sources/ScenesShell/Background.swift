@@ -8,14 +8,10 @@ import Foundation
 
 
 class Background : RenderableEntity {
+    let metars: [Metar]
 
     init() {
-        // Using a meaningful name can be helpful for debugging
-        super.init(name:"Background")
-    }
-
-    override func setup(canvasSize:Size, canvas:Canvas) {
-        var metars = [Metar]()
+        var tempMetars = [Metar]()
 
         let filePath = "./Example-metars.csv"
         let fileURL = URL(fileURLWithPath:filePath.expandingTildeInPath)
@@ -37,13 +33,20 @@ class Background : RenderableEntity {
                           nonNil.dewpoint_c == nil) {
                         continue;
                     }
-                    metars.append(nonNil)
+                    tempMetars.append(nonNil)
                 }
             }
         } catch {
             print("Failed to load due to error \(error).")
         }
+        self.metars = tempMetars
+        
+        // Using a meaningful name can be helpful for debugging
+        super.init(name:"Background")
+    }
 
+    override func setup(canvasSize:Size, canvas:Canvas) {
+        
         func renderMetar(_ metar:Metar) {
             let center = metar.sky_cover1 ?? ""
             let topLeft = String(Int(metar.temp_c!))
@@ -202,7 +205,7 @@ class Background : RenderableEntity {
         }
 
 
-        for metar in metars {
+        for metar in self.metars {
             let graphPoint = convertToPixels(longitude: metar.longitude!, latitude:metar.latitude!,
                                              topLeftLongitude: -125.0, topLeftLatitude: 53.0,
                                              bottomRightLongitude: -65.0, bottomRightLatitude: 25,
