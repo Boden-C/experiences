@@ -9,6 +9,9 @@ import Foundation
 
 class Background : RenderableEntity {
     let metars: [Metar]
+    let backgroundImage:Image
+    let reqImages:{Image}
+    let canvasSize:Size
 
     init() {
         var tempMetars = [Metar]()
@@ -34,19 +37,62 @@ class Background : RenderableEntity {
                         continue;
                     }
                     tempMetars.append(nonNil)
+                    if let weather = nonNil.wx_string {
+                        guard let weatherURL = URL(string:"https://github.com/Boden-C/experiences/blob/main/images/"+weather) else {
+            fatalError("Failed to create URL")
+        }
+        whitehouse = Image(sourceURL:whitehouseURL)
+                    }
                 }
             }
         } catch {
             print("Failed to load due to error \(error).")
         }
         self.metars = tempMetars
+        self.backgroundImage = Image(SourceURL:URL(string:"https://upload.wikimedia.org/wikipedia/commons/d/d8/MapOfTheUS.png"))
+        self.reqImages = {
+            "+RA": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/%2BRA.png?raw=true")),
+            "RA": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/RA.png?raw=true")),
+            "-RA": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/-RA.png?raw=true")),
+            "wind_0-0": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_0-0.png?raw=true")),
+            "wind_0-10": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_0-10.png?raw=true")),
+            "wind_0-5": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_0-5.png?raw=true")),
+            "wind_10-0": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_10-0.png?raw=true")),
+            "wind_10-15": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_10-15.png?raw=true")),
+            "wind_10-20": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_10-20.png?raw=true")),
+            "wind_15-0": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_15-0.png?raw=true")),
+            "wind_15-20": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_15-20.png?raw=true")),
+            "wind_15-25": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_15-25.png?raw=true")),
+            "wind_20-0": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_20-0.png?raw=true")),
+            "wind_20-25": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_20-25.png?raw=true")),
+            "wind_20-30": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_20-30.png?raw=true")),
+            "wind_25-0": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_25-0.png?raw=true")),
+            "wind_25-30": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_25-30.png?raw=true")),
+            "wind_25-35": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_25-35.png?raw=true")),
+            "wind_5-0": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_5-0.png?raw=true")),
+            "wind_5-10": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_5-10.png?raw=true")),
+            "wind_5-15": Image(SourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_5-15.png?raw=true"))
+        }
         
         // Using a meaningful name can be helpful for debugging
         super.init(name:"Background")
     }
 
     override func setup(canvasSize:Size, canvas:Canvas) {
-        
+        canvas.setup(self.backgroundImage)
+        for (key, _) in self.reqImages {
+            canvas.setup(self.reqImages[key])
+        }
+        self.canvasSize = canvasSize
+    }
+
+    override func render(canvas:Canvas) {
+
+        if backgroundImage.isReady {
+            backgroundImage.renderMode = .destinationRect(Rect(topLeft:Point(x:0, y:0), size:Size(width:Int(1333*((canvasSize.height)/522)), height:canvasSize.height)))
+            canvas.render(backgroundImage)
+        }
+
         func renderMetar(_ metar:Metar) {
             let center = metar.sky_cover1 ?? ""
             let topLeft = String(Int(metar.temp_c!))
@@ -189,9 +235,6 @@ class Background : RenderableEntity {
         }
         
         for (i, metar) in self.metars.enumerated() {
-            if (i > 200) {
-                break;
-            }
             let graphPoint = convertToPixels(longitude: metar.longitude!, latitude:metar.latitude!,
                                              topLeftLongitude: -125.0, topLeftLatitude: 50.0,
                                              bottomRightLongitude: -65.0, bottomRightLatitude: 25)
@@ -199,11 +242,5 @@ class Background : RenderableEntity {
             renderMetar(metar)
             canvas.render(Transform(translate:-graphPoint))
         }
-        
     }
-
-    override func render(canvas:Canvas) {
-        
-    }
-
 }
