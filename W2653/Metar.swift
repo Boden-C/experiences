@@ -207,6 +207,93 @@ class Metar: CustomStringConvertible {
         self.elevation_m = extractInt(elevation_m)
     }
 
+    init(string:String) {
+                func extractInt(_ string: String?) -> Int? {
+            if let nonNil = string {
+                if let number = Int(nonNil) {
+                    return number
+                } else {
+                    print("Could not extract an int from \(nonNil), returning nil")
+                    return nil
+                }
+            } else {
+                return nil
+            }
+        }
+        func extractDouble(_ string: String?) -> Double? {
+            if let nonNil = string {
+                if let number = Double(nonNil) {
+                    return number
+                } else {
+                    print("Could not extract an int from \(nonNil), returning nil")
+                    return nil
+                }
+            } else {
+                return nil
+            }
+        }
+        func extractBool(_ string: String?) -> Bool? {
+            if let nonNil = string {
+                if nonNil.uppercased().contains("TRUE") {
+                    return true
+                } else if nonNil.uppercased().contains("FALSE") {
+                    return false
+                } else {
+                    print("Could not extract a bool from \(nonNil), returning nil")
+                    return nil
+                }
+            } else {
+                return nil
+            }
+        }
+
+        let fields = string.split(separator: ",").map({$0.isEmpty ? nil : String($0)})
+        self.raw_text = fields[0]
+        self.station_id = fields[1]
+        self.observation_time = fields[2]
+        self.latitude = extractDouble(fields[3])
+        self.longitude = extractDouble(fields[4])
+        self.temp_c = extractDouble(fields[5])
+        self.dewpoint_c = extractDouble(fields[6])
+        self.wind_dir_degrees = extractInt(fields[7])
+        self.wind_speed_kt = extractInt(fields[8])
+        self.wind_gust_kt = extractInt(fields[9])
+        self.visibility_statute_mi = extractDouble(fields[10])
+        self.altim_in_hg = extractDouble(fields[11])
+        self.sea_level_pressure_mb = extractDouble(fields[12])
+        self.corrected = extractBool(fields[13])
+        self.auto = extractBool(fields[14])
+        self.auto_station = extractBool(fields[15])
+        self.maintenance_indicator_on = extractBool(fields[16])
+        self.no_signal = extractBool(fields[17])
+        self.lightning_sensor_off = extractBool(fields[18])
+        self.freezing_rain_sensor_off = extractBool(fields[19])
+        self.present_weather_sensor_off = extractBool(fields[20])
+        self.wx_string = fields[21]
+        self.sky_cover1 = fields[22]
+        self.cloud_base_ft_agl1 = extractInt(fields[23])
+        self.sky_cover2 = fields[24]
+        self.cloud_base_ft_agl2 = extractInt(fields[25])
+        self.sky_cover3 = fields[26]
+        self.cloud_base_ft_agl3 = extractInt(fields[27])
+        self.sky_cover4 = fields[28]
+        self.cloud_base_ft_agl4 = extractInt(fields[29])
+        self.flight_category = fields[30]
+        self.three_hr_pressure_tendency_mb = extractDouble(fields[31])
+        self.maxT_c = extractDouble(fields[32])
+        self.minT_c = extractDouble(fields[33])
+        self.maxT24hr_c = extractDouble(fields[34])
+        self.minT24hr_c = extractDouble(fields[35])
+        self.precip_in = extractDouble(fields[36])
+        self.pcp3hr_in = extractDouble(fields[37])
+        self.pcp6hr_in = extractDouble(fields[38])
+        self.pcp24hr_in = extractDouble(fields[39])
+        self.snow_in = extractDouble(fields[40])
+        self.vert_vis_ft = extractInt(fields[41])
+        self.metar_type = fields[42]
+        self.elevation_m = extractInt(fields[43])
+    }
+
     init(raw_text:String) {
         let fields = raw_text.components(separatedBy: .whitespaces)
         
