@@ -248,7 +248,7 @@ class Metar: CustomStringConvertible {
         }
 
         let fields = string.components(separatedBy: ",").map({$0.isEmpty ? nil : String($0)})
-        if (fields.count < 43) {
+        if (fields.count < 44) {
             print("Could not parse \(string)")
             return nil
         }
