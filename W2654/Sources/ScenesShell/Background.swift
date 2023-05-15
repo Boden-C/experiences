@@ -9,14 +9,13 @@ import Foundation
 
 class Background : RenderableEntity {
 
-
-    init() {      
+    init() {
+        
         // Using a meaningful name can be helpful for debugging
         super.init(name:"Background")
     }
 
     override func setup(canvasSize:Size, canvas:Canvas) {
-
         var metars = [Metar]()
 
         let filePath = "./Example-metars.csv"
@@ -29,7 +28,10 @@ class Background : RenderableEntity {
                 }
                 let metar = Metar(string:line)
                 if let nonNil = metar {
-                    if (nonNil.temp_c == nil ||
+                    if (
+                          nonNil.latitude == nil ||
+                          nonNil.longitude == nil ||
+                          nonNil.temp_c == nil ||
                           nonNil.altim_in_hg == nil ||
                           nonNil.visibility_statute_mi == nil ||
                           nonNil.cloud_base_ft_agl1 == nil ||
@@ -53,8 +55,11 @@ class Background : RenderableEntity {
             let bottomRight = (metar.station_id) ?? ""
             let label = (metar.flight_category) ?? ""
 
-            var color:Color
+            
+            canvas.render(FillStyle(color:Color(.white)))
+            canvas.render(Text(location:Point(x:0, y:-2), text: topLeft))
 
+            var color:Color
             switch label {
             case "VFR":
                 color = Color(red: 44, green: 128, blue: 38)
@@ -67,18 +72,10 @@ class Background : RenderableEntity {
             default:
                 color = Color(red: 0, green: 0, blue: 0) // Default color if none of the cases match
             }
-
-            canvas.render(FillStyle(color:color))
-            canvas.render(Rectangle(rect:Rect(topLeft:Point(x:26,y:-12), size:Size(width:30, height:12))))
-
-            canvas.render(FillStyle(color:Color(.white)))
-            canvas.render(Text(location:Point(x:0, y:-2), text: topLeft))
-            canvas.render(Text(location:Point(x:27, y:-2), text: label))
-            
-            let centerCircleStrokeStyle = StrokeStyle(color:Color(red:109, green:216, blue:73))
+            let centerCircleStrokeStyle = StrokeStyle(color:color)
             var centerCircleFillStyle = FillStyle(color:Color(.white))
             if (center == "OVC") {
-                centerCircleFillStyle = FillStyle(color:Color(red:109, green:216, blue:73))
+                centerCircleFillStyle = FillStyle(color:color)
             }   
             let centerCircle = Ellipse(center:Point(x:67, y:35), radiusX:21, radiusY:21, fillMode:.fillAndStroke)
             canvas.render(centerCircleStrokeStyle)
@@ -132,8 +129,7 @@ class Background : RenderableEntity {
 
 
 
-            if speed == 5 { //why are you special
-                print("detected 5")
+            if speed == 5 {
                 turtle.forward(steps: barbGap * 2)
                 turtle.right(degrees: 90.0)
                 turtle.forward(steps: halfBarb)
@@ -147,8 +143,6 @@ class Background : RenderableEntity {
 
 
                 while drawn > 0 {
-
-                    print(drawn)
 
                     turtle.forward(steps: barbGap * barbGapMultiplier)
                     turtle.right(degrees: 90)
@@ -164,7 +158,6 @@ class Background : RenderableEntity {
                         drawn -= 5
                         turtle.pop()
                     }
-                    else { print("unexpected wind barb interval") }
 
                     barbGapMultiplier -= 1
                 }
@@ -174,16 +167,52 @@ class Background : RenderableEntity {
             canvas.render(turtle)
         }
         
-        /*
+        //Background image code
+        let imageOriginalSize = Size(width: 1333, height: 522)
+        var scaledImageSize = Size(width: imageOriginalSize.width, height: imageOriginalSize.height)
+
+        // Scale the image up until it reaches the canvas width or height, whichever comes first
+        if scaledImageSize.width > canvasSize.width {
+            let scaleFactor = Double(canvasSize.width) / Double(scaledImageSize.width)
+            scaledImageSize.width = canvasSize.width
+            scaledImageSize.height = Int(Double(scaledImageSize.height) * scaleFactor)
+        }
+
+        if scaledImageSize.height > canvasSize.height {
+            let scaleFactor = Double(canvasSize.height) / Double(scaledImageSize.height)
+            scaledImageSize.height = canvasSize.height
+            scaledImageSize.width = Int(Double(scaledImageSize.width) * scaleFactor)
+        }
+
+        
+        func convertToPixels(longitude: Double, latitude: Double,
+                             topLeftLongitude: Double, topLeftLatitude: Double,
+                             bottomRightLongitude: Double, bottomRightLatitude: Double,
+                             topLeft:Point, size:Size) -> DoublePoint {
+
+            // calculate the x and y distances of the given longitude and latitude from the top-left corner of the image
+            let xDistanceFromTopLeft = (longitude - topLeftLongitude) / Double(size.width)
+            let yDistanceFromTopLeft = (latitude - topLeftLatitude) / Double(size.height)
+
+            // calculate the pixel coordinates by multiplying the distances by the image dimensions
+            let pixelX = Double(topLeft.x) + xDistanceFromTopLeft * Double(size.width)
+            let pixelY = Double(topLeft.y) + yDistanceFromTopLeft * Double(size.height)
+
+            // create and return the resulting point
+            return DoublePoint(x: pixelX, y: pixelY)
+        }
+
+
         for metar in metars {
-            let transform = Transform(translate:DoublePoint(x:(metar.longitude) ?? 0.0, y:metar.latitude ?? 0.0))
+            let graphPoint = convertToPixels(longitude: metar.longitude!, latitude:metar.latitude!,
+                                             topLeftLongitude: -125.0, topLeftLatitude: 53.0,
+                                             bottomRightLongitude: -65.0, bottomRightLatitude: 25,
+                                             topLeft:Point(x:0,y:0), size:scaledImageSize)
+            let transform = Transform(translate:graphPoint)
             canvas.render(transform)
             renderMetar(metar)
-            }
-         */
+        }
 
-        canvas.render(Transform(translate:DoublePoint(x:0, y:10)))
-        renderMetar(metars[0])
-        
     }
+
 }

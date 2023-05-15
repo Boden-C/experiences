@@ -1,34 +1,20 @@
 import Scenes
 import Igis
 
-/*
- This class is responsible for the background Layer.
- Internally, it maintains the RenderableEntities for this layer.
- */
+class BackgroundImage : RenderableEntity {
+    let imageURL = "https://upload.wikimedia.org/wikipedia/commons/d/d8/MapOfTheUS.pnghttps://upload.wikimedia.org/wikipedia/commons/d/d8/MapOfTheUS.png"
+    var image : Image?
+    var canvasSize = Size(width:0, height:0)
 
-class BackgroundLayer : Layer {
-    let background = Background()
-
-    init() {
-        guard let mapURL = URL(string:"https://upload.wikimedia.org/wikipedia/commons/d/d8/MapOfTheUS.png") else {
-            fatalError("Failed to create URL for whitehouse")
+    override func calculate(canvasSize: Size) {
+        ImageLoader.load(imageURL) { loadedImage in
+            self.image = loadedImage
         }
-        self.backgroundMap = Image(sourceURL:mapURL)
-        self.canvasSize = Size(width:0, height:0)
-        
-        // Using a meaningful name can be helpful for debugging
-        super.init(name:"Background")
 
-        // We insert our RenderableEntities in the constructor
-        insert(entity:background, at:.back)
-    }
-
-    override func setup(canvasSize:size, canvas:Canvas) {
         self.canvasSize = canvasSize
     }
 
-    override func render(canvas:Canvas) {
-        //Background image code
+    override func render(canvas: Canvas) {
         let imageOriginalSize = Size(width: 1333, height: 522)
         var scaledImageSize = Size(width: imageOriginalSize.width, height: imageOriginalSize.height)
 
@@ -46,7 +32,7 @@ class BackgroundLayer : Layer {
         }
 
         if backgroundMap.isReady {
-            backgroundMap.renderMode = .destinationRect(Rect(topLeft:Point(x:0, y:0), size:scaledImageSize)
+            backgroundMap.renderMode = .destinationRect(Rect(topLeft:Point(x:0, y:0), size:scaledImageSize))
             canvas.render(whitehouse)
         }
     }
