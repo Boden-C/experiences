@@ -1,3 +1,4 @@
+import Foundation
 import Scenes
 import Igis
 
@@ -8,6 +9,7 @@ import Igis
 
 class BackgroundLayer : Layer {
     let background = Background()
+    let backgroundMap: Image
 
     init() {
         guard let mapURL = URL(string:"https://upload.wikimedia.org/wikipedia/commons/d/d8/MapOfTheUS.png") else {
@@ -46,7 +48,7 @@ class BackgroundLayer : Layer {
         }
 
         if backgroundMap.isReady {
-            backgroundMap.renderMode = .destinationRect(Rect(topLeft:Point(x:0, y:0), size:scaledImageSize)
+            backgroundMap.renderMode = .destinationRect(Rect(topLeft:Point(x:0, y:0), size:scaledImageSize))
             canvas.render(whitehouse)
         }
     }
