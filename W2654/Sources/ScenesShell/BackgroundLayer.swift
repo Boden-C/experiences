@@ -25,7 +25,7 @@ class BackgroundLayer : Layer {
         insert(entity:background, at:.back)
     }
 
-    override func setup(canvasSize:size, canvas:Canvas) {
+    override func setup(canvasSize:Size, canvas:Canvas) {
         self.canvasSize = canvasSize
     }
 
