@@ -129,8 +129,6 @@ class Background : RenderableEntity {
             turtle.pop()
             turtle.push()
 
-
-
             if speed == 5 {
                 turtle.forward(steps: barbGap * 2)
                 turtle.right(degrees: 90.0)
@@ -170,51 +168,42 @@ class Background : RenderableEntity {
         }
         
         //Background image code
-        let imageOriginalSize = Size(width: 1333, height: 522)
-        var scaledImageSize = Size(width: imageOriginalSize.width, height: imageOriginalSize.height)
-
-        // Scale the image up until it reaches the canvas width or height, whichever comes first
-        if scaledImageSize.width > canvasSize.width {
-            let scaleFactor = Double(canvasSize.width) / Double(scaledImageSize.width)
-            scaledImageSize.width = canvasSize.width
-            scaledImageSize.height = Int(Double(scaledImageSize.height) * scaleFactor)
-        }
-
-        if scaledImageSize.height > canvasSize.height {
-            let scaleFactor = Double(canvasSize.height) / Double(scaledImageSize.height)
-            scaledImageSize.height = canvasSize.height
-            scaledImageSize.width = Int(Double(scaledImageSize.width) * scaleFactor)
-        }
-
         
         func convertToPixels(longitude: Double, latitude: Double,
                              topLeftLongitude: Double, topLeftLatitude: Double,
-                             bottomRightLongitude: Double, bottomRightLatitude: Double,
-                             topLeft:Point, size:Size) -> DoublePoint {
+                             bottomRightLongitude: Double, bottomRightLatitude: Double
+        ) -> DoublePoint {
 
-            // calculate the x and y distances of the given longitude and latitude from the top-left corner of the image
-            let xDistanceFromTopLeft = (longitude - topLeftLongitude) / Double(size.width)
-            let yDistanceFromTopLeft = (latitude - topLeftLatitude) / Double(size.height)
+            // calculate the total width and height of the image in pixels
+            let widthInPixels = Double(1333*((canvasSize.height)/522))
+            let heightInPixels = Double(canvasSize.height)
+            
+            let xDistanceFromTopLeft = (longitude - topLeftLongitude) / (bottomRightLongitude - topLeftLongitude) * widthInPixels
+            let yDistanceFromTopLeft = (latitude - topLeftLatitude) / (bottomRightLatitude - topLeftLatitude) * heightInPixels
 
-            // calculate the pixel coordinates by multiplying the distances by the image dimensions
-            let pixelX = Double(topLeft.x) + xDistanceFromTopLeft * Double(size.width)
-            let pixelY = Double(topLeft.y) + yDistanceFromTopLeft * Double(size.height)
+            let pixelX = xDistanceFromTopLeft
+            let pixelY = yDistanceFromTopLeft
 
             // create and return the resulting point
-            return DoublePoint(x: pixelX, y: pixelY)
+            return DoublePoint(x: Double(pixelX), y: Double(pixelY))
         }
-
-
-        for metar in self.metars {
+        
+        for (i, metar) in self.metars.enumerated() {
+            if (i > 200) {
+                break;
+            }
             let graphPoint = convertToPixels(longitude: metar.longitude!, latitude:metar.latitude!,
-                                             topLeftLongitude: -125.0, topLeftLatitude: 53.0,
-                                             bottomRightLongitude: -65.0, bottomRightLatitude: 25,
-                                             topLeft:Point(x:0,y:0), size:scaledImageSize)
-            let transform = Transform(translate:graphPoint)
-            canvas.render(transform)
+                                             topLeftLongitude: -125.0, topLeftLatitude: 50.0,
+                                             bottomRightLongitude: -65.0, bottomRightLatitude: 25)
+            canvas.render(Transform(translate:graphPoint))
             renderMetar(metar)
+            canvas.render(Transform(translate:-graphPoint))
         }
+        
+    }
 
+    override func render(canvas:Canvas) {
+        
     }
 
 }
