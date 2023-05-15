@@ -1,0 +1,116 @@
+import Scenes
+import Igis
+
+  /*
+     This class is responsible for rendering the background.
+   */
+
+
+class Background : RenderableEntity {
+
+    init() {
+        // Using a meaningful name can be helpful for debugging        
+        super.init(name:"Background")
+    }
+
+    func renderRectangle(canvas:Canvas, rect:Rect) {
+        let rectangle = Rectangle(rect:rect, fillMode:.stroke)
+        canvas.render(rectangle)
+    }
+
+    
+    func renderText(canvas:Canvas, x:Int, y:Int, text:String) {
+        let text = Text(location:Point(x:x, y:y), text:text)
+        text.font = "20pt Arial"
+        canvas.render(text)
+    }
+
+    
+    func singleRectangle(canvas:Canvas) {
+        renderText(canvas:canvas,x:20,y:40,text:"1.")
+
+        let rect = Rect(topLeft:Point(x:20, y:50), size:Size(width:300, height:50))
+        renderRectangle(canvas:canvas, rect:rect)
+    }
+
+    func row(canvas:Canvas, rect:Rect, columns:Int) {
+        var rowRect = rect
+        for _ in 0..<columns {
+            renderRectangle(canvas:canvas, rect:rowRect)
+            rowRect.topLeft.x += rowRect.size.width
+        }
+    }
+    
+    func grid(canvas:Canvas) {
+        renderText(canvas:canvas,x:20,y:150,text:"2.")
+
+        var rect = Rect(topLeft:Point(x:20, y:170), size:Size(width:50, height:50))
+        for _ in 0..<3 {
+            row(canvas:canvas, rect:rect, columns:3)
+            rect.topLeft.y += rect.size.height
+        }
+    }
+    
+    func brickWall(canvas:Canvas) {
+        renderText(canvas:canvas,x:20,y:380,text:"3.")
+
+        var rect = Rect(topLeft:Point(x:20, y:390), size:Size(width:50, height:20))
+        var alternate = true
+        for _ in 0..<5 {
+            alternate = !alternate
+            row(canvas:canvas, rect:rect, columns:5)
+            rect.topLeft.y += rect.size.height
+            if alternate {
+                rect.topLeft.x += (rect.size.width)/2
+            } else {
+                rect.topLeft.x -= (rect.size.width)/2
+            }
+        }
+    }
+
+    func pyramid(canvas:Canvas) {
+        renderText(canvas:canvas,x:20,y:550,text:"4.")
+
+        var rect = Rect(topLeft:Point(x:20, y:750), size:Size(width:50, height:20))
+        var base = 8
+        for _ in 0..<8 {
+            row(canvas:canvas, rect:rect, columns:base)
+            rect.topLeft.y -= rect.size.height
+                rect.topLeft.x += (rect.size.width)/2
+            base -= 1
+        }
+    }
+    
+    func skyscraper(canvas:Canvas, rect:Rect) {
+        var signRect = rect
+        renderRectangle(canvas:canvas, rect:rect)
+        signRect.size.height = 60
+        signRect.topLeft.y -= 60
+        renderRectangle(canvas:canvas, rect:signRect)
+        renderText(canvas:canvas, x:(signRect.topLeft.x)+3, y:(signRect.topLeft.y)+40, text:"Boden Corp")
+    }
+        
+    
+    override func setup(canvasSize:Size,canvas:Canvas) {
+        singleRectangle(canvas:canvas)
+        grid(canvas:canvas)
+        brickWall(canvas:canvas)
+        pyramid(canvas:canvas)
+
+        var rect = Rect(topLeft:Point(x:500, y:500), size:Size(width:150, height:900))
+        renderText(canvas:canvas, x:500, y:200, text:"5.")
+        skyscraper(canvas:canvas, rect:rect)
+
+        renderText(canvas:canvas, x:1100, y:200, text:"6.")
+        rect.topLeft.x += 600
+        rect.topLeft.y = 456
+        skyscraper(canvas:canvas, rect:rect)
+        rect.topLeft.x += 300
+        rect.topLeft.y = 658
+        skyscraper(canvas:canvas, rect:rect)
+        rect.topLeft.x += 300
+        rect.topLeft.y = 326
+        skyscraper(canvas:canvas, rect:rect)
+    }
+}
+
