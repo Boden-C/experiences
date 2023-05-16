@@ -10,7 +10,6 @@ import Foundation
 class Background : RenderableEntity {
     let metars: [Metar]
     let backgroundImage:Image
-    var reqImages:[String:Image]
     var canvasSize = Size(width:0, height:0)
 
     init() {
@@ -44,29 +43,6 @@ class Background : RenderableEntity {
         }
         self.metars = tempMetars
         self.backgroundImage = Image(sourceURL:URL(string:"https://upload.wikimedia.org/wikipedia/commons/d/d8/MapOfTheUS.png")!)
-        self.reqImages = [
-          "+RA": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/%2BRA.png")!),
-          "RA": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/RA.png")!),
-          "-RA": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences//main/images/-RA.png")!),
-          "wind_0-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_0-0.png")!),
-          "wind_0-10": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_0-10.png")!),
-          "wind_0-5": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_0-5.png")!),
-          "wind_10-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_10-0.png")!),
-          "wind_10-15": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/image/wind_10-15.png")!),
-          "wind_10-20": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences//main/images/wind_10-20.png")!),
-          "wind_15-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_15-0.png")!),
-          "wind_15-20": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_15-20.png")!),
-          "wind_15-25": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_15-25.png")!),
-          "wind_20-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_20-0.png")!),
-          "wind_20-25": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_20-25.png")!),
-          "wind_20-30": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_20-30.png")!),
-          "wind_25-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences//main/images/wind_25-0.png")!),
-          "wind_25-30": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_25-30.png")!),
-          "wind_25-35": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_25-35.png")!),
-          "wind_5-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_5-0.png")!),
-          "wind_5-10": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_5-10.png")!),
-          "wind_5-15": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_5-15.png")!)
-        ]
         
         // Using a meaningful name can be helpful for debugging
         super.init(name:"Background")
@@ -74,9 +50,6 @@ class Background : RenderableEntity {
 
     override func setup(canvasSize:Size, canvas:Canvas) {
         canvas.setup(self.backgroundImage)
-        for (key, _) in self.reqImages {
-            canvas.setup(self.reqImages[key]!)
-        }
         self.canvasSize = canvasSize
     }
 
@@ -186,24 +159,6 @@ class Background : RenderableEntity {
             let bottomRight = (metar.station_id) ?? ""
             let label = (metar.flight_category) ?? ""
 
-            /*
-            let spdString = String(roundToFive((metar.wind_speed_kt ?? 0)))
-            let gustString = String(roundToFive((metar.wind_gust_kt ?? 0)))
-            let key = "wind_"+spdString+"-"+gustString
-            if let nonNil = reqImages[key] {
-                if nonNil.isReady {
-                    canvas.render(Transform(translate:-point))
-                    nonNil.renderMode = .destinationRect(Rect(topLeft:Point(x:67+Int(point.x), y:35+Int(point.x)), size:Size(width:50, height:20)))
-                    canvas.render(Transform(rotateRadians:Double(metar.wind_dir_degrees ?? 0) * Double.pi/180.0))
-                    canvas.render(nonNil)
-                    canvas.render(Rectangle(rect:Rect(topLeft:Point(x:100,y:100), size:Size(width:100,height:10))))
-                    canvas.render(Transform(rotateRadians:Double(-(metar.wind_dir_degrees ?? 0)) * Double.pi/180.0))
-                    canvas.render(Transform(translate:point))
-                }
-                }
-             */
-
-
             var color:Color
             switch label {
             case "VFR":
@@ -234,10 +189,8 @@ class Background : RenderableEntity {
             canvas.render(Text(location: Point(x: 92, y: 17), text:topRight))
             canvas.render(Text(location: Point(x: 21, y: 38), text: middleLeft))
             canvas.render(Text(location: Point(x: 97, y: 38), text: middleRight))
-            canvas.render(Rectangle(rect:Rect(topLeft: Point(x: 86, y: 48), size:Size(width: 30, height: 15))))
             canvas.render(FillStyle(color:Color(red:7, green: 81, blue: 124)))
             canvas.render(Text(location: Point(x: 32, y: 58), text: bottomLeft))
-            canvas.render(FillStyle(color:Color(.white)))
             canvas.render(Text(location: Point(x: 87, y:58), text: bottomRight))
             
             let turtle = Turtle(canvasSize:canvasSize)
@@ -253,8 +206,8 @@ class Background : RenderableEntity {
         ) -> DoublePoint {
 
             // calculate the total width and height of the image in pixels
-            let widthInPixels = Double(1333*((canvasSize.height)/522))
-            let heightInPixels = Double(canvasSize.height)
+            let widthInPixels = Double(1333*((canvasSize.height-50)/522))
+            let heightInPixels = Double(canvasSize.height-50)
             
             let xDistanceFromTopLeft = (longitude - topLeftLongitude) / (bottomRightLongitude - topLeftLongitude) * widthInPixels
             let yDistanceFromTopLeft = (latitude - topLeftLatitude) / (bottomRightLatitude - topLeftLatitude) * heightInPixels
@@ -267,9 +220,6 @@ class Background : RenderableEntity {
         }
         
         for (i, metar) in self.metars.enumerated() {
-            if (i > 200) {
-                break;
-            }
             let graphPoint = convertToPixels(longitude: metar.longitude!, latitude:metar.latitude!,
                                              topLeftLongitude: -125.0, topLeftLatitude: 50.0,
                                              bottomRightLongitude: -65.0, bottomRightLatitude: 25)
