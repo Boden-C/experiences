@@ -10,7 +10,7 @@ import Foundation
 class Background : RenderableEntity {
     let metars: [Metar]
     let backgroundImage:Image
-    let reqImages:[String:Image]
+    var reqImages:[String:Image]
     var canvasSize = Size(width:0, height:0)
 
     init() {
@@ -45,27 +45,27 @@ class Background : RenderableEntity {
         self.metars = tempMetars
         self.backgroundImage = Image(sourceURL:URL(string:"https://upload.wikimedia.org/wikipedia/commons/d/d8/MapOfTheUS.png")!)
         self.reqImages = [
-            "+RA": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/%2BRA.png?raw=true")!),
-            "RA": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/RA.png?raw=true")!),
-            "-RA": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/-RA.png?raw=true")!),
-            "wind_0-0": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_0-0.png?raw=true")!),
-            "wind_0-10": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_0-10.png?raw=true")!),
-            "wind_0-5": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_0-5.png?raw=true")!),
-            "wind_10-0": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_10-0.png?raw=true")!),
-            "wind_10-15": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_10-15.png?raw=true")!),
-            "wind_10-20": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_10-20.png?raw=true")!),
-            "wind_15-0": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_15-0.png?raw=true")!),
-            "wind_15-20": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_15-20.png?raw=true")!),
-            "wind_15-25": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_15-25.png?raw=true")!),
-            "wind_20-0": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_20-0.png?raw=true")!),
-            "wind_20-25": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_20-25.png?raw=true")!),
-            "wind_20-30": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_20-30.png?raw=true")!),
-            "wind_25-0": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_25-0.png?raw=true")!),
-            "wind_25-30": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_25-30.png?raw=true")!),
-            "wind_25-35": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_25-35.png?raw=true")!),
-            "wind_5-0": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_5-0.png?raw=true")!),
-            "wind_5-10": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_5-10.png?raw=true")!),
-            "wind_5-15": Image(sourceURL:URL(string:"https://github.com/Boden-C/experiences/blob/main/images/wind_5-15.png?raw=true")!)
+          "+RA": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/%2BRA.png")!),
+          "RA": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/RA.png")!),
+          "-RA": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences//main/images/-RA.png")!),
+          "wind_0-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_0-0.png")!),
+          "wind_0-10": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_0-10.png")!),
+          "wind_0-5": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_0-5.png")!),
+          "wind_10-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_10-0.png")!),
+          "wind_10-15": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/image/wind_10-15.png")!),
+          "wind_10-20": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences//main/images/wind_10-20.png")!),
+          "wind_15-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_15-0.png")!),
+          "wind_15-20": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_15-20.png")!),
+          "wind_15-25": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_15-25.png")!),
+          "wind_20-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_20-0.png")!),
+          "wind_20-25": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_20-25.png")!),
+          "wind_20-30": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_20-30.png")!),
+          "wind_25-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences//main/images/wind_25-0.png")!),
+          "wind_25-30": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_25-30.png")!),
+          "wind_25-35": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_25-35.png")!),
+          "wind_5-0": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_5-0.png")!),
+          "wind_5-10": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_5-10.png")!),
+          "wind_5-15": Image(sourceURL:URL(string:"https://raw.githubusercontent.com/Boden-C/experiences/main/images/wind_5-15.png")!)
         ]
         
         // Using a meaningful name can be helpful for debugging
@@ -87,7 +87,96 @@ class Background : RenderableEntity {
             canvas.render(backgroundImage)
         }
 
-        func renderMetar(_ metar:Metar) {
+        func roundToFive(_ num:Int) -> Int {
+            return 5*Int(round(Float(num)/5))
+        }
+
+
+        func drawWindBarb(turtle: Turtle, color: Color, speed: Int, angle: Int)  {
+
+            let angle = Double(angle)
+            let speed = roundToFive(speed)
+
+            let spineSize = 50
+            let half = spineSize / 2
+            let barbGap = half / 3
+
+            let halfBarb = 10
+            let fullBarb = 20
+
+            turtle.penColor(color: color)
+            turtle.right(degrees:angle)
+            turtle.penDown()
+            turtle.forward(steps: half)
+            turtle.push() //halfway pt barbs start
+            turtle.forward(steps: half)
+            turtle.pop()
+            turtle.push()
+
+            if speed == 5 { //why are you special
+                turtle.forward(steps: barbGap * 2)
+                turtle.right(degrees: 90.0)
+                turtle.forward(steps: halfBarb)
+                turtle.pop()
+            }
+
+            if speed > 5 && speed <= 40 {
+
+                var drawn = speed
+                var barbGapMultiplier = 3
+
+
+                while drawn > 0 {
+
+                    //print(drawn)
+
+                    turtle.forward(steps: barbGap * barbGapMultiplier)
+                    turtle.right(degrees: 90)
+
+                    if drawn >= 10 {
+                        turtle.forward(steps: fullBarb)
+                        drawn -= 10
+                        turtle.pop()
+                        turtle.push()
+                    }
+                    else if drawn == 5 {
+                        turtle.forward(steps: halfBarb)
+                        drawn -= 5
+                        turtle.pop()
+                    }
+                    else { print("error") }
+
+                    barbGapMultiplier -= 1
+                }
+            }
+            turtle.penUp()
+            turtle.home() //reset turtle
+        }
+
+        func drawBarbMax(turtle: Turtle, metar: Metar) {
+            let speed = metar.wind_speed_kt ?? 0
+            let angle = metar.wind_dir_degrees ?? 0
+
+            turtle.penUp()
+            turtle.forward(steps:canvasSize.height/2-35)
+            turtle.left(degrees:90)
+            turtle.forward(steps:canvasSize.width/2-67)
+            turtle.right(degrees:90)
+            turtle.penDown()
+
+            if metar.wind_gust_kt != nil && metar.wind_gust_kt ?? 0 > metar.wind_speed_kt ?? 0{
+                let topSpeed = metar.wind_gust_kt ?? 0
+
+                drawWindBarb(turtle: turtle, color: Color(.red), speed: topSpeed, angle: angle)
+                drawWindBarb(turtle: turtle, color: Color(.black), speed: speed, angle: angle)
+            } else {
+                drawWindBarb(turtle: turtle, color: Color(.black), speed: speed, angle: angle)
+            }
+        }
+
+
+        func renderMetar(_ metar:Metar, point:DoublePoint) {
+            
             let center = metar.sky_cover1 ?? ""
             let topLeft = String(Int(metar.temp_c!))
             let topRight = String(Int(metar.altim_in_hg!))
@@ -97,9 +186,23 @@ class Background : RenderableEntity {
             let bottomRight = (metar.station_id) ?? ""
             let label = (metar.flight_category) ?? ""
 
-            
-            canvas.render(FillStyle(color:Color(.white)))
-            canvas.render(Text(location:Point(x:0, y:-2), text: topLeft))
+            /*
+            let spdString = String(roundToFive((metar.wind_speed_kt ?? 0)))
+            let gustString = String(roundToFive((metar.wind_gust_kt ?? 0)))
+            let key = "wind_"+spdString+"-"+gustString
+            if let nonNil = reqImages[key] {
+                if nonNil.isReady {
+                    canvas.render(Transform(translate:-point))
+                    nonNil.renderMode = .destinationRect(Rect(topLeft:Point(x:67+Int(point.x), y:35+Int(point.x)), size:Size(width:50, height:20)))
+                    canvas.render(Transform(rotateRadians:Double(metar.wind_dir_degrees ?? 0) * Double.pi/180.0))
+                    canvas.render(nonNil)
+                    canvas.render(Rectangle(rect:Rect(topLeft:Point(x:100,y:100), size:Size(width:100,height:10))))
+                    canvas.render(Transform(rotateRadians:Double(-(metar.wind_dir_degrees ?? 0)) * Double.pi/180.0))
+                    canvas.render(Transform(translate:point))
+                }
+                }
+             */
+
 
             var color:Color
             switch label {
@@ -136,77 +239,12 @@ class Background : RenderableEntity {
             canvas.render(Text(location: Point(x: 32, y: 58), text: bottomLeft))
             canvas.render(FillStyle(color:Color(.white)))
             canvas.render(Text(location: Point(x: 87, y:58), text: bottomRight))
-
-            let angle = Double((metar.wind_dir_degrees) ?? 0)
-
-            func roundToFive(_ num:Int) -> Int {
-                return 5*Int(round(Float(num)/5))
-            }
             
-            let speed = roundToFive((metar.wind_speed_kt) ?? 0)
-            let topSpeed = roundToFive((metar.wind_gust_kt) ?? 0)
-
-            let spineSize = 2
-            let half = spineSize / 2
-            let barbGap = half / 3
-
-            let halfBarb = 10
-            let fullBarb = 20
-
             let turtle = Turtle(canvasSize:canvasSize)
-            turtle.penUp()
-            turtle.forward(steps:canvasSize.height/2-35)
-            turtle.left(degrees:90)
-            turtle.forward(steps:canvasSize.width/2-67)
-            turtle.right(degrees:90)
-
-            turtle.penColor(color: Color(.black))
-            turtle.right(degrees:angle)
-            turtle.penDown()
-            turtle.forward(steps: half)
-            turtle.push() //halfway pt barbs start
-            turtle.forward(steps: half)
-            turtle.pop()
-            turtle.push()
-
-            if speed == 5 {
-                turtle.forward(steps: barbGap * 2)
-                turtle.right(degrees: 90.0)
-                turtle.forward(steps: halfBarb)
-                turtle.pop()
-            }
-
-            if speed > 5 && speed <= 40 {
-
-                var drawn = speed
-                var barbGapMultiplier = 3
-
-
-                while drawn > 0 {
-
-                    turtle.forward(steps: barbGap * barbGapMultiplier)
-                    turtle.right(degrees: 90)
-
-                    if drawn >= 10 {
-                        turtle.forward(steps: fullBarb)
-                        drawn -= 10
-                        turtle.pop()
-                        turtle.push()
-                    }
-                    else if drawn == 5 {
-                        turtle.forward(steps: halfBarb)
-                        drawn -= 5
-                        turtle.pop()
-                    }
-
-                    barbGapMultiplier -= 1
-                }
-            }
-
-            turtle.backward(steps: half) //reset turtle to start of barb
+            drawBarbMax(turtle:turtle, metar:metar)
             canvas.render(turtle)
         }
-        
+
         //Background image code
         
         func convertToPixels(longitude: Double, latitude: Double,
@@ -229,11 +267,14 @@ class Background : RenderableEntity {
         }
         
         for (i, metar) in self.metars.enumerated() {
+            if (i > 200) {
+                break;
+            }
             let graphPoint = convertToPixels(longitude: metar.longitude!, latitude:metar.latitude!,
                                              topLeftLongitude: -125.0, topLeftLatitude: 50.0,
                                              bottomRightLongitude: -65.0, bottomRightLatitude: 25)
             canvas.render(Transform(translate:graphPoint))
-            renderMetar(metar)
+            renderMetar(metar, point:graphPoint)
             canvas.render(Transform(translate:-graphPoint))
         }
     }
